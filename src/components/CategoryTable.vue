@@ -16,8 +16,8 @@
           <td>{{ category.name }}</td>
           <td>{{ category.description }}</td>
           <td>
-            <button>Edit</button>
-            <button @click="$emit('delete:category', employee.id)">Delete</button>
+            <button @click="$emit('editMode:category', category.id)">Edit</button>
+            <button @click="$emit('delete:category', category.id)">Delete</button>
           </td>
         </tr>
       </tbody>

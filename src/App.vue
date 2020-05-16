@@ -2,20 +2,35 @@
   <div id="app" class="small-container">
     <h1>Categories</h1>
 
-    <category-form @add:category="addCategory"/>
-    <category-table :categories="categories" @delete:category="deleteCategory"/>
+    <category-form 
+      v-if="!isEditMode" 
+      @add:category="addCategory"
+    />
+    <category-edit 
+      v-if="isEditMode" 
+      :category="category" 
+      @edit:category="editCategory"
+      @addMode:category="addModeCategory"
+    />
+    <category-table 
+      :categories="categories" 
+      @delete:category="deleteCategory"
+      @editMode:category="editModeCategory"
+    />
   </div>
 </template>
 
 <script>
   import CategoryTable from '@/components/CategoryTable.vue'
   import CategoryForm from '@/components/CategoryForm.vue'
+  import CategoryEdit from '@/components/CategoryEdit.vue'
 
   export default {
     name: 'app',
     components: {
       CategoryTable,
       CategoryForm,
+      CategoryEdit,
     },
     data() {
       return {
@@ -36,9 +51,18 @@
             description: 'no description',
           },
         ],
+        category: {
+          name: '',
+          description: '',
+        },
+        isEditMode: false,
       }
     },
     methods: {
+      addModeCategory() {
+        this.category = {}
+        this.isEditMode = false
+      },  
       addCategory(category) {
         const lastId = this.categories.length > 0 ? this.categories[this.categories.length - 1].id : 0;
         const id = lastId + 1;
@@ -47,8 +71,17 @@
         this.categories = [...this.categories, newCategory]
       },
       deleteCategory(id) {
-        this.category = this.categories.filter(
+        this.categories = this.categories.filter(
           category => category.id !== id
+        )
+      },
+      editModeCategory(id) {
+        this.category = this.categories[id-1]
+        this.isEditMode = true
+      },  
+      editCategory(id, updatedCategory) {
+        this.categories = this.categories.map(category =>
+          category.id === id ? updatedCategory : category
         )
       }
     }
